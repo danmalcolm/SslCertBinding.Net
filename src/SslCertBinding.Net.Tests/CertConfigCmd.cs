@@ -20,6 +20,7 @@ namespace SslCertBinding.Net.Sample.Tests
 		public class Options
 		{
 			// ReSharper disable InconsistentNaming
+			public string hostnameport;
 			public IPEndPoint ipport;
 			public string certhash;
 			public Guid appid;
@@ -36,12 +37,24 @@ namespace SslCertBinding.Net.Sample.Tests
 			// ReSharper restore InconsistentNaming
 		}
 
-		public static CommandResult Show(IPEndPoint ipPort = null, bool throwExcepton = false) {
-			return ExecCommand(string.Format("http show sslcert {0}", ipPort), throwExcepton);
+		public static CommandResult Show(IPEndPoint ipPort = null, string hostName = null, bool throwExcepton = false)
+		{
+			string filterArgs = "";
+			if (!string.IsNullOrEmpty(hostName))
+			{
+				if(ipPort == null)
+					throw new ArgumentNullException("ipPort");
+				filterArgs = string.Format("hostnameport={0}:{1}", hostName, ipPort.Port);
+			}
+			else if (ipPort != null)
+			{
+				filterArgs = string.Format("ipport={0}", ipPort);
+			}
+			return ExecCommand(string.Format("http show sslcert {0}", filterArgs), throwExcepton);
 		}
 
-		public static bool IpPortIsPresentInConfig(IPEndPoint ipPort) {
-			var result = Show(ipPort);
+		public static bool IpPortIsPresentInConfig(IPEndPoint ipPort, string hostName = null) {
+			var result = Show(ipPort, hostName);
 			return result.IsSuccessfull;
 		}
 
@@ -68,11 +81,16 @@ namespace SslCertBinding.Net.Sample.Tests
 			ExecCommand(string.Format("http add sslcert {0}", sb), true);
 		}
 
-		public static void RemoveIpEndPoints(string thumbprint) {
+		public static void RemoveBindingsUsingCertificate(string thumbprint) {
 			foreach (var ipEndPoint in GetIpEndPoints(thumbprint)) {
-				ExecDelete(ipEndPoint);
+				ExecDelete(ipEndPoint, null);
+			}
+			foreach (var hostNamePort in GetHostNamePorts(thumbprint)) {
+				ExecDelete(null, hostNamePort);
 			}
 		}
+
+		
 
 		public static IPEndPoint[] GetIpEndPoints(string thumbprint = null) {
 			var result = Show(throwExcepton: true);
@@ -84,6 +102,19 @@ namespace SslCertBinding.Net.Sample.Tests
 
 			var endPoints = matches.Cast<Match>().Select(match => IpEndpointTools.ParseIpEndPoint(match.Groups[1].Value)).ToArray();
 			return endPoints;
+		}
+
+		public static string[] GetHostNamePorts(string thumbprint = null)
+		{
+			var result = Show(throwExcepton: true);
+			var pattern = string.Format(@"\s+Hostname:port\s+:\s+(\S+?)\s+Certificate Hash\s+:\s+{0}\s+",
+				string.IsNullOrEmpty(thumbprint) ? @"\S+" : thumbprint);
+			var matches = Regex.Matches(result.Output, pattern,
+				RegexOptions.IgnoreCase | RegexOptions.CultureInvariant |
+				RegexOptions.Singleline);
+
+			var values = matches.Cast<Match>().Select(match => match.Groups[1].Value).ToArray();
+			return values;
 		}
 
 		private static CommandResult ExecCommand(string arguments, bool throwExcepton) {
@@ -116,8 +147,13 @@ namespace SslCertBinding.Net.Sample.Tests
 			return commandResult;
 		}
 
-		private static void ExecDelete(IPEndPoint ipPort) {
-			ExecCommand(string.Format("http delete sslcert {0}", ipPort), true);
+		private static void ExecDelete(IPEndPoint ipPort, string hostNamePort) {
+			if (ipPort != null) {
+				ExecCommand(string.Format("http delete sslcert ipport={0}", ipPort), true);
+			}
+			if (hostNamePort != null) {
+				ExecCommand(string.Format("http delete sslcert hostnameport={0}", hostNamePort), true);
+			}
 		}
 	}
 }

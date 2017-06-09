@@ -21,10 +21,10 @@ namespace SslCertBinding.Net
 		public string StoreName { get; private set; }
 
 		/// <summary>
-		/// An IP address and port with which this SSL certificate is associated. 
-		/// If the <see cref="IPEndPoint.Address"/> property is set to 0.0.0.0, the certificate is applicable to all IPv4 and IPv6 addresses. If the <see cref="IPEndPoint.Address"/> property is set to [::], the certificate is applicable to all IPv6 addresses.
+		/// The binding with which this SSL certificate is associated. This will combine either an IP address
+		/// and port or a host name and port for bindings in the SSL Server Name Indication (SNI) store 
 		/// </summary>
-		public IPEndPoint IpPort { get; private set; }
+		public BindingEndPoint EndPoint { get; private set; }
 
 		/// <summary>
 		/// A unique identifier of the application setting this record.
@@ -36,13 +36,15 @@ namespace SslCertBinding.Net
 		/// </summary>
 		public BindingOptions Options { get; private set; }
 
-		public CertificateBinding(string certificateThumbprint, StoreName certificateStoreName, IPEndPoint ipPort, Guid appId, BindingOptions options = null)
-			: this(certificateThumbprint, certificateStoreName.ToString(), ipPort, appId, options) { }
+		public CertificateBinding(string certificateThumbprint, StoreName certificateStoreName, BindingEndPoint endPoint, Guid appId, BindingOptions options = null)
+			: this(certificateThumbprint, certificateStoreName.ToString(), endPoint, appId, options) { }
 
-		public CertificateBinding(string certificateThumbprint, string certificateStoreName, IPEndPoint ipPort, Guid appId, BindingOptions options = null) {
+		public CertificateBinding(string certificateThumbprint, string certificateStoreName, BindingEndPoint endPoint, Guid appId, BindingOptions options = null)
+		{
 
 			if (certificateThumbprint == null) throw new ArgumentNullException("certificateThumbprint");
-			if (ipPort == null) throw new ArgumentNullException("ipPort");
+			if (endPoint == null) throw new ArgumentNullException("endPoint");
+
 
 			if (certificateStoreName == null) {
 				// StoreName of null is assumed to be My / Personal
@@ -52,7 +54,7 @@ namespace SslCertBinding.Net
 
 			Thumbprint = certificateThumbprint;
 			StoreName = certificateStoreName;
-			IpPort = ipPort;
+			EndPoint = endPoint;
 			AppId = appId;
 			Options = options ?? new BindingOptions();
 		}

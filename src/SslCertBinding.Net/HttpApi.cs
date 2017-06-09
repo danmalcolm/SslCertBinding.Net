@@ -74,6 +74,9 @@ namespace SslCertBinding.Net
 			HttpServiceConfigIPListenList = 0,
 			HttpServiceConfigSSLCertInfo,
 			HttpServiceConfigUrlAclInfo,
+			HttpServiceConfigTimeout,
+			HttpServiceConfigCache,
+			HttpServiceConfigSslSniCertInfo,
 			HttpServiceConfigMax
 		}
 
@@ -85,6 +88,13 @@ namespace SslCertBinding.Net
 		}
 
 		[StructLayout(LayoutKind.Sequential)]
+		public struct HTTP_SERVICE_CONFIG_SSL_SNI_SET
+		{
+			public HTTP_SERVICE_CONFIG_SSL_SNI_KEY KeyDesc;
+			public HTTP_SERVICE_CONFIG_SSL_PARAM ParamDesc;
+		}
+
+		[StructLayout(LayoutKind.Sequential)]
 		public struct HTTP_SERVICE_CONFIG_SSL_KEY
 		{
 			public IntPtr pIpPort;
@@ -92,6 +102,35 @@ namespace SslCertBinding.Net
 			public HTTP_SERVICE_CONFIG_SSL_KEY(IntPtr pIpPort) {
 				this.pIpPort = pIpPort;
 			}
+		}
+
+		[StructLayout(LayoutKind.Sequential)]
+		public struct HTTP_SERVICE_CONFIG_SSL_SNI_KEY
+		{
+			public SOCKADDR_STORAGE IpPort;
+
+			[MarshalAs(UnmanagedType.LPWStr)]
+			public string Host;
+
+			public HTTP_SERVICE_CONFIG_SSL_SNI_KEY(SOCKADDR_STORAGE ipPort, string host)
+			{
+				this.IpPort = ipPort;
+				this.Host = host;
+			}
+		}
+
+		[StructLayout(LayoutKind.Sequential)]
+		public struct SOCKADDR_STORAGE
+		{
+			public short ss_family;
+
+			[MarshalAs(UnmanagedType.ByValArray, SizeConst = 6)]
+			public byte[] __ss_pad1;
+
+			public long __ss_align;
+
+			[MarshalAs(UnmanagedType.ByValArray, SizeConst = 112)]
+			public byte[] __ss_pad2;
 		}
 
 		[StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
@@ -129,6 +168,14 @@ namespace SslCertBinding.Net
 		{
 			public HTTP_SERVICE_CONFIG_QUERY_TYPE QueryDesc;
 			public HTTP_SERVICE_CONFIG_SSL_KEY KeyDesc;
+			public uint dwToken;
+		}
+
+		[StructLayout(LayoutKind.Sequential)]
+		public struct HTTP_SERVICE_CONFIG_SSL_SNI_QUERY
+		{
+			public HTTP_SERVICE_CONFIG_QUERY_TYPE QueryDesc;
+			public HTTP_SERVICE_CONFIG_SSL_SNI_KEY KeyDesc;
 			public uint dwToken;
 		}
 
@@ -199,6 +246,7 @@ namespace SslCertBinding.Net
 		public const uint HTTP_INITIALIZE_CONFIG = 0x00000002;
 		public const uint NOERROR = 0;
 		public const uint ERROR_INSUFFICIENT_BUFFER = 122;
+		public const uint ERROR_THE_PARAMETER_IS_INCORRECT = 87;
 		public const uint ERROR_ALREADY_EXISTS = 183;
 		public const uint ERROR_FILE_NOT_FOUND = 2;
 		public const int ERROR_NO_MORE_ITEMS = 259;

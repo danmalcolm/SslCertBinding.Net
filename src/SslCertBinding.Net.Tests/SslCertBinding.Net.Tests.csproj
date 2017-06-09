@@ -53,6 +53,7 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="BindingEndPointTests.cs" />
     <Compile Include="CertConfigCmd.cs" />
     <Compile Include="IpEndpointTools.cs" />
     <Compile Include="NetshShowOutputTester.cs" />
@@ -62,7 +63,7 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="TestCertificateInstaller.cs" />
-    <Compile Include="UnitTests.cs" />
+    <Compile Include="CertificateBindingConfigurationTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

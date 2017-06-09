@@ -4,9 +4,9 @@ namespace SslCertBinding.Net
 {
 	public interface ICertificateBindingConfiguration
 	{
-		CertificateBinding[] Query(IPEndPoint ipPort = null);
+		CertificateBinding[] Query(BindingEndPoint endPoint);
 		bool Bind(CertificateBinding binding);
-		void Delete(IPEndPoint endPoint);
-		void Delete(IPEndPoint[] endPoints);
+		void Delete(BindingEndPoint endPoint);
+		void Delete(BindingEndPoint[] endPoints);
 	}
 }

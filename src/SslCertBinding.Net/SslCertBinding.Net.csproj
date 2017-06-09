@@ -32,8 +32,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>
-    </DocumentationFile>
+    <DocumentationFile>bin\Release\SslCertBinding.Net.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup>
     <SignAssembly>true</SignAssembly>
@@ -45,6 +44,8 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BindingEndPoint.cs" />
+    <Compile Include="BindingEndPointType.cs" />
     <Compile Include="BindingOptions.cs" />
     <Compile Include="CertificateBinding.cs" />
     <Compile Include="CertificateBindingConfiguration.cs" />
@@ -52,6 +53,7 @@
     <Compile Include="ICertificateBindingConfiguration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SockaddrInterop.cs" />
+    <Compile Include="SockAddrStorageInterop.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ClassDiagram.cd" />
