@@ -135,9 +135,9 @@ namespace SslCertBinding.Net.Sample.Tests
     Negotiate Client Certificate    : Disabled
 "
 				, ipPort, _testingCertThumbprint, appId.ToString("B"));
-			Assert.IsTrue(result.Output.ToLowerInvariant().Contains(expectedOutput.ToLowerInvariant()));
+			NetshShowOutputTester.AssertContainsOutput(result.Output, expectedOutput);
 		}
-
+		
 		[TestMethod]
 		public void AddWithNonDefaultOptions() {
 			var ipPort = GetEndpointWithFreeRandomPort();
@@ -178,7 +178,7 @@ namespace SslCertBinding.Net.Sample.Tests
     Negotiate Client Certificate    : Enabled
 "
 				, ipPort, _testingCertThumbprint, appId.ToString("B"));
-			Assert.IsTrue(result.Output.ToLowerInvariant().Contains(expectedOutput.ToLowerInvariant()));
+			NetshShowOutputTester.AssertContainsOutput(result.Output, expectedOutput);
 		}
 
 		[TestMethod]
@@ -271,38 +271,20 @@ namespace SslCertBinding.Net.Sample.Tests
     Negotiate Client Certificate    : Enabled
 "
 				, ipPort, _testingCertThumbprint, appId.ToString("B"));
-			Assert.IsTrue(result.Output.ToLowerInvariant().Contains(expectedOutput.ToLowerInvariant()));
+			NetshShowOutputTester.AssertContainsOutput(result.Output, expectedOutput);
 		}
-
-
+		
 		private static string _testingCertThumbprint = string.Empty;
 
 		[TestInitialize]
 		public void TestInitialize() {
-			DoInLocalMachineCertStores(certStore => {
-				var cert = new X509Certificate2(Resources.certCA, string.Empty);
-				_testingCertThumbprint = cert.Thumbprint;
-				certStore.Add(cert);
-			});
+			_testingCertThumbprint = TestCertificateInstaller.InstallTestCertificates();
 		}
 
 		[TestCleanup]
 		public void TestCleanup() {
 			CertConfigCmd.RemoveIpEndPoints(_testingCertThumbprint);
-			DoInLocalMachineCertStores(certStore => {
-				var certs = certStore.Certificates.Find(X509FindType.FindByThumbprint, _testingCertThumbprint, false);
-				certStore.RemoveRange(certs);
-			});
-		}
-
-		private static void DoInLocalMachineCertStores(Action<X509Store> action) {
-			var storeNames = new[] { StoreName.My, StoreName.AuthRoot, };
-			foreach (var storeName in storeNames) {
-				var store = new X509Store(storeName, StoreLocation.LocalMachine);
-				store.Open(OpenFlags.ReadWrite | OpenFlags.OpenExistingOnly);
-				action(store);
-				store.Close();
-			}
+			TestCertificateInstaller.UninstallTestCertificates();
 		}
 
 		private static IPEndPoint GetEndpointWithFreeRandomPort(string ip = "0.0.0.0") {

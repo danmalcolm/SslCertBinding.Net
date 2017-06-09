@@ -55,11 +55,13 @@
   <ItemGroup>
     <Compile Include="CertConfigCmd.cs" />
     <Compile Include="IpEndpointTools.cs" />
+    <Compile Include="NetshShowOutputTester.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="TestCertificateInstaller.cs" />
     <Compile Include="UnitTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -70,7 +72,7 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\certCA.pfx" />
+    <None Include="Resources\SSLCertBinding.Net.Sample.Tests.pfx" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\SslCertBinding.Net\SslCertBinding.Net.csproj">

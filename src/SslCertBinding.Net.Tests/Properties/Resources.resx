@@ -118,8 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="certCA" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\certCA.pfx;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-    <comment>A PFX file with the certificate with CN=SslCertBinding.Net.Sample.Tests</comment>
+  <data name="TestCertsPfx" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\SSLCertBinding.Net.Sample.Tests.pfx;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
 </root>
